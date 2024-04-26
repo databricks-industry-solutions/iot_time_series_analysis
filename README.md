@@ -11,7 +11,7 @@ In the manufacturing industry, managing and analyzing time series data at scale 
 To get started with this Solution Accelerator, run the setup notebook and use the DLT pipeline it creates.
 
 ## Reference Architecture
-<img src='https://raw.githubusercontent.com/databricks-industry-solutions/iot-distributed-ml/master/images/reference_architecture.png' width=800>
+<img src='https://raw.githubusercontent.com/databricks-industry-solutions/iot_time_series_analysis/master/images/reference_arch.png?raw=true' width=800>
 
 ## Authors
 josh.melton@databricks.com
