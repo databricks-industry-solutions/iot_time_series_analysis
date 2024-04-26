@@ -1,0 +1,661 @@
+{
+  "datasets": [
+    {
+      "name": "037decea",
+      "displayName": "Factory Defect Rates",
+      "query": "SELECT factory_id, device_id, model_id,\n  100*(SUM(CASE WHEN defect = 1 THEN `count` ELSE 0 END) / SUM(`count`)) AS defect_rate\nFROM <gold_table>\nWHERE device_id is not null\nGROUP BY factory_id, device_id, model_id\n"
+    },
+    {
+      "name": "35c0349f",
+      "displayName": "Non Defect Count",
+      "query": "SELECT device_id, count(*)\nFROM <inspection_table>\nWHERE device_id is not null and defect=0\nGROUP BY device_id"
+    },
+    {
+      "name": "412a3e84",
+      "displayName": "Defect Count",
+      "query": "SELECT count(*)\nFROM <inspection_table>\nWHERE device_id is not null and defect=1\nGROUP BY device_id"
+    },
+    {
+      "name": "554ef544",
+      "displayName": "Bronze Sensor Data",
+      "query": "SELECT * \nFROM <sensor_table>\nWHERE device_id is not null"
+    },
+    {
+      "name": "80e34c6b",
+      "displayName": "Gold Sensor Data",
+      "query": "SELECT *\nFROM <gold_table>\nWHERE device_id is not null"
+    },
+    {
+      "name": "c4291c4c",
+      "displayName": "Bronze Inspection Data",
+      "query": "SELECT device_id,\n    DATE_TRUNC('day', CAST(timestamp AS TIMESTAMP)) AS timestamp_hour,\n    SUM(CASE WHEN defect > 0 THEN 1 ELSE 0 END) AS defect_count,\n    SUM(CASE WHEN defect = 0 THEN 1 ELSE 0 END) AS not_defect_count\nFROM <inspection_table>\nWHERE device_id is not null\nGROUP BY device_id, timestamp_hour"
+    },
+    {
+      "name": "d407482c",
+      "displayName": "Silver Sensor Data",
+      "query": "SELECT *\nFROM <silver_table>\nWHERE device_id is not null"
+    }
+  ],
+  "pages": [
+    {
+      "name": "62debdb5",
+      "displayName": "New Page",
+      "layout": [
+        {
+          "widget": {
+            "name": "1a27b851",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d407482c",
+                  "fields": [
+                    {
+                      "name": "avg(sensor_temperature)",
+                      "expression": "AVG(`sensor_temperature`)"
+                    },
+                    {
+                      "name": "daily(timestamp)",
+                      "expression": "DATE_TRUNC(\"DAY\", `timestamp`)"
+                    },
+                    {
+                      "name": "defect",
+                      "expression": "`defect`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(timestamp)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "Day"
+                },
+                "y": {
+                  "fieldName": "avg(sensor_temperature)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Temperature"
+                },
+                "color": {
+                  "fieldName": "defect",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": 1,
+                        "color": "#FF3621"
+                      },
+                      {
+                        "value": 0,
+                        "color": "#00A972"
+                      },
+                      {
+                        "value": null,
+                        "color": "#077A9D"
+                      }
+                    ]
+                  },
+                  "displayName": "Defect"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "1afc0b56",
+            "queries": [
+              {
+                "name": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d24f195b8f35df8709dac59d_device_id",
+                "query": {
+                  "datasetName": "554ef544",
+                  "fields": [
+                    {
+                      "name": "device_id",
+                      "expression": "`device_id`"
+                    },
+                    {
+                      "name": "device_id_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d2521ae4b037b1a2a7a2410f_device_id",
+                "query": {
+                  "datasetName": "c4291c4c",
+                  "fields": [
+                    {
+                      "name": "device_id",
+                      "expression": "`device_id`"
+                    },
+                    {
+                      "name": "device_id_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d25d16d4996f62e29edbca1f_device_id",
+                "query": {
+                  "datasetName": "d407482c",
+                  "fields": [
+                    {
+                      "name": "device_id",
+                      "expression": "`device_id`"
+                    },
+                    {
+                      "name": "device_id_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d2601953a05adcb5f3377f88_device_id",
+                "query": {
+                  "datasetName": "80e34c6b",
+                  "fields": [
+                    {
+                      "name": "device_id",
+                      "expression": "`device_id`"
+                    },
+                    {
+                      "name": "device_id_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef78f365b12dea597277f915f2ec4_device_id",
+                "query": {
+                  "datasetName": "037decea",
+                  "fields": [
+                    {
+                      "name": "device_id",
+                      "expression": "`device_id`"
+                    },
+                    {
+                      "name": "device_id_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "device_id",
+                    "displayName": "device_id",
+                    "queryName": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d25d16d4996f62e29edbca1f_device_id"
+                  },
+                  {
+                    "fieldName": "device_id",
+                    "displayName": "device_id",
+                    "queryName": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d24f195b8f35df8709dac59d_device_id"
+                  },
+                  {
+                    "fieldName": "device_id",
+                    "displayName": "device_id",
+                    "queryName": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d2601953a05adcb5f3377f88_device_id"
+                  },
+                  {
+                    "fieldName": "device_id",
+                    "displayName": "device_id",
+                    "queryName": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d2521ae4b037b1a2a7a2410f_device_id"
+                  },
+                  {
+                    "fieldName": "device_id",
+                    "displayName": "device_id",
+                    "queryName": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef78f365b12dea597277f915f2ec4_device_id"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Device ID"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "ba3e21fe",
+            "queries": [
+              {
+                "name": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d24f195b8f35df8709dac59d_model_id",
+                "query": {
+                  "datasetName": "554ef544",
+                  "fields": [
+                    {
+                      "name": "model_id",
+                      "expression": "`model_id`"
+                    },
+                    {
+                      "name": "model_id_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d25d16d4996f62e29edbca1f_model_id",
+                "query": {
+                  "datasetName": "d407482c",
+                  "fields": [
+                    {
+                      "name": "model_id",
+                      "expression": "`model_id`"
+                    },
+                    {
+                      "name": "model_id_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d2601953a05adcb5f3377f88_model_id",
+                "query": {
+                  "datasetName": "80e34c6b",
+                  "fields": [
+                    {
+                      "name": "model_id",
+                      "expression": "`model_id`"
+                    },
+                    {
+                      "name": "model_id_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef78f365b12dea597277f915f2ec4_model_id",
+                "query": {
+                  "datasetName": "037decea",
+                  "fields": [
+                    {
+                      "name": "model_id",
+                      "expression": "`model_id`"
+                    },
+                    {
+                      "name": "model_id_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "model_id",
+                    "displayName": "model_id",
+                    "queryName": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d2601953a05adcb5f3377f88_model_id"
+                  },
+                  {
+                    "fieldName": "model_id",
+                    "displayName": "model_id",
+                    "queryName": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d24f195b8f35df8709dac59d_model_id"
+                  },
+                  {
+                    "fieldName": "model_id",
+                    "displayName": "model_id",
+                    "queryName": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef605d25d16d4996f62e29edbca1f_model_id"
+                  },
+                  {
+                    "fieldName": "model_id",
+                    "displayName": "model_id",
+                    "queryName": "dashboards/01eef605d2491931b39a32682bf57b69/datasets/01eef78f365b12dea597277f915f2ec4_model_id"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Model ID"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "c16a97fd",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "412a3e84",
+                  "fields": [
+                    {
+                      "name": "sum(count(1))",
+                      "expression": "SUM(`count(1)`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(count(1))",
+                  "displayName": "Sum of count(1)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Defects Flagged"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "ca60a676",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "35c0349f",
+                  "fields": [
+                    {
+                      "name": "sum(count(1))",
+                      "expression": "SUM(`count(1)`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(count(1))",
+                  "displayName": "Sum of count(1)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Non Defects"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "d7a7349f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d407482c",
+                  "fields": [
+                    {
+                      "name": "avg(sensor_density)",
+                      "expression": "AVG(`sensor_density`)"
+                    },
+                    {
+                      "name": "daily(timestamp)",
+                      "expression": "DATE_TRUNC(\"DAY\", `timestamp`)"
+                    },
+                    {
+                      "name": "defect",
+                      "expression": "`defect`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(timestamp)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "timestamp"
+                },
+                "y": {
+                  "fieldName": "avg(sensor_density)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Density"
+                },
+                "color": {
+                  "fieldName": "defect",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": 1,
+                        "color": "#FF3621"
+                      },
+                      {
+                        "value": 0,
+                        "color": "#00A972"
+                      }
+                    ]
+                  },
+                  "displayName": "Defect"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 6,
+            "width": 5,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "db8f484b",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c4291c4c",
+                  "fields": [
+                    {
+                      "name": "sum(defect_count)",
+                      "expression": "SUM(`defect_count`)"
+                    },
+                    {
+                      "name": "sum(not_defect_count)",
+                      "expression": "SUM(`not_defect_count`)"
+                    },
+                    {
+                      "name": "weekly(timestamp_hour)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `timestamp_hour`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "weekly(timestamp_hour)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "Week"
+                },
+                "y": {
+                  "axis": {
+                    "title": "Inspections"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "sum(defect_count)",
+                      "displayName": "Defect Flagged"
+                    },
+                    {
+                      "fieldName": "sum(not_defect_count)",
+                      "displayName": "Non Defect"
+                    }
+                  ]
+                },
+                "label": {
+                  "show": false
+                }
+              },
+              "mark": {
+                "colors": [
+                  "#FF3621",
+                  "#00A972",
+                  "#8BCAE7",
+                  "#AB4057",
+                  "#99DDB4",
+                  "#FCA4A1",
+                  "#919191",
+                  "#BF7080"
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 0,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "fbd01ca0",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "037decea",
+                  "fields": [
+                    {
+                      "name": "avg(defect_rate)",
+                      "expression": "AVG(`defect_rate`)"
+                    },
+                    {
+                      "name": "factory_id",
+                      "expression": "`factory_id`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "avg(defect_rate)",
+                  "scale": {
+                    "type": "quantitative",
+                    "reverse": false
+                  },
+                  "axis": {
+                    "title": "% Defect Rate"
+                  },
+                  "displayName": "% Defect Rate"
+                },
+                "y": {
+                  "fieldName": "factory_id",
+                  "axis": {
+                    "title": "Factory"
+                  },
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  },
+                  "displayName": "Factory"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 2,
+            "height": 6
+          }
+        }
+      ]
+    }
+  ]
+}
